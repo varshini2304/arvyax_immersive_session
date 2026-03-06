@@ -197,16 +197,10 @@ class DetailsScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(height: 26),
                                   _StartSessionButton(
-                                    onPressed: () {
-                                      ref
-                                          .read(currentAmbienceProvider.notifier)
-                                          .state = ambience;
-                                      ref
-                                          .read(playerElapsedProvider.notifier)
-                                          .state = Duration.zero;
-                                      ref
-                                          .read(playerPlayingProvider.notifier)
-                                          .state = true;
+                                    onPressed: () async {
+                                      await ref
+                                          .read(playerControllerProvider)
+                                          .startAmbience(ambience);
                                       Navigator.pushNamed(context, '/session');
                                     },
                                   ),

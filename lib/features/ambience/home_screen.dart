@@ -13,6 +13,8 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(playerSyncProvider);
+
     final ambiencesAsync = ref.watch(ambienceListProvider);
     final selectedTag = ref.watch(ambienceTagProvider);
     final query = ref.watch(ambienceQueryProvider);
@@ -234,10 +236,7 @@ class HomeScreen extends ConsumerWidget {
                     progress: miniPlayerProgress,
                     playing: ref.watch(playerPlayingProvider),
                     onTap: () => Navigator.pushNamed(context, '/session'),
-                    onPlayPause: () {
-                      ref.read(playerPlayingProvider.notifier).state =
-                          !ref.read(playerPlayingProvider);
-                    },
+                    onPlayPause: () => ref.read(playerControllerProvider).togglePlayPause(),
                   ),
               ],
             ),

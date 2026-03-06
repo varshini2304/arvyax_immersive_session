@@ -18,6 +18,7 @@ class ArvyaXApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
+      initialRoute: '/loading',
       onGenerateRoute: AppRouter.generate,
     );
   }

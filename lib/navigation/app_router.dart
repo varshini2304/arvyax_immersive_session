@@ -7,10 +7,13 @@ import '../features/player/session_screen.dart';
 import '../features/journal/reflection_screen.dart';
 import '../features/journal/history_screen.dart';
 import '../features/journal/detail_screen.dart';
+import '../features/loading/loading_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
+      case '/loading':
+        return MaterialPageRoute(builder: (_) => const LoadingScreen());
       case '/':
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case '/details':

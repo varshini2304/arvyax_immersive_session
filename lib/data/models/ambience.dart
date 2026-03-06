@@ -4,6 +4,7 @@ class Ambience {
   final String tag;
   final Duration duration;
   final String imageUrl;
+  final String audioAsset;
   final String description;
   final List<String> sensoryRecipe;
 
@@ -13,6 +14,7 @@ class Ambience {
     required this.tag,
     required this.duration,
     required this.imageUrl,
+    required this.audioAsset,
     this.description = '',
     this.sensoryRecipe = const [],
   });

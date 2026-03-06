@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -17,13 +16,10 @@ class _SessionScreenState extends ConsumerState<SessionScreen>
     with TickerProviderStateMixin {
   late final AnimationController _breathController;
   late final AnimationController _gradientController;
-  Timer? _timer;
-  late Duration _elapsed;
 
   @override
   void initState() {
     super.initState();
-    _elapsed = ref.read(playerElapsedProvider);
     _breathController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 6),
@@ -32,36 +28,19 @@ class _SessionScreenState extends ConsumerState<SessionScreen>
       vsync: this,
       duration: const Duration(seconds: 12),
     )..repeat(reverse: true);
-    _startTimer();
-    ref.read(playerPlayingProvider.notifier).state = true;
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (_) {
-      final ambience = ref.read(currentAmbienceProvider);
-      final playing = ref.read(playerPlayingProvider);
-      if (ambience == null || !playing) return;
-
-      if (_elapsed >= ambience.duration) {
-        ref.read(playerPlayingProvider.notifier).state = false;
-        return;
-      }
-
-      setState(() => _elapsed += const Duration(seconds: 1));
-      ref.read(playerElapsedProvider.notifier).state = _elapsed;
-    });
   }
 
   @override
   void dispose() {
     _breathController.dispose();
     _gradientController.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(playerSyncProvider);
+
     final ambience = ref.watch(currentAmbienceProvider);
     if (ambience == null) {
       return const Scaffold(body: SizedBox.shrink());
@@ -69,8 +48,9 @@ class _SessionScreenState extends ConsumerState<SessionScreen>
 
     final total = ambience.duration;
     final playing = ref.watch(playerPlayingProvider);
+    final elapsed = ref.watch(playerElapsedProvider);
     final progress =
-        (_elapsed.inMilliseconds / total.inMilliseconds.clamp(1, 1 << 31))
+        (elapsed.inMilliseconds / total.inMilliseconds.clamp(1, 1 << 31))
             .clamp(0.0, 1.0)
             .toDouble();
 
@@ -193,7 +173,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen>
                     ),
                     const SizedBox(height: 34),
                     Text(
-                      '${_format(_elapsed)} / ${_format(total)}',
+                      '${_format(elapsed)} / ${_format(total)}',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             color: Colors.white.withOpacity(0.76),
                             fontWeight: FontWeight.w500,
@@ -215,19 +195,16 @@ class _SessionScreenState extends ConsumerState<SessionScreen>
                         child: Slider(
                           value: progress * total.inSeconds.toDouble(),
                           max: total.inSeconds.toDouble(),
-                          onChanged: (v) {
-                            setState(() => _elapsed = Duration(seconds: v.toInt()));
-                            ref.read(playerElapsedProvider.notifier).state =
-                                _elapsed;
-                          },
+                          onChanged: (v) => ref
+                              .read(playerControllerProvider)
+                              .seek(Duration(seconds: v.toInt())),
                         ),
                       ),
                     ),
                     const SizedBox(height: 34),
                     GestureDetector(
-                      onTap: () {
-                        ref.read(playerPlayingProvider.notifier).state = !playing;
-                      },
+                      onTap: () =>
+                          ref.read(playerControllerProvider).togglePlayPause(),
                       child: Container(
                         width: 108,
                         height: 108,
@@ -351,16 +328,17 @@ class _SessionScreenState extends ConsumerState<SessionScreen>
                         ),
                         Expanded(
                           child: TextButton(
-                            onPressed: () {
-                              ref.read(playerPlayingProvider.notifier).state =
-                                  false;
-                              ref.read(currentAmbienceProvider.notifier).state =
-                                  null;
-                              ref.read(playerElapsedProvider.notifier).state =
-                                  Duration.zero;
-                              Navigator.pop(context);
-                              Navigator.pushReplacementNamed(
-                                  context, '/reflection');
+                            onPressed: () async {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              if (!mounted) return;
+
+                              Navigator.of(
+                                context,
+                              ).pushReplacementNamed('/reflection');
+
+                              await ref
+                                  .read(playerControllerProvider)
+                                  .stopAndClear();
                             },
                             child: const Text('End'),
                           ),

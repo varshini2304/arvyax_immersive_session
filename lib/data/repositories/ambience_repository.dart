@@ -8,6 +8,7 @@ class AmbienceRepository {
       tag: 'Focus',
       duration: Duration(minutes: 3),
       imageUrl: 'assets/images/forest.jpg',
+      audioAsset: 'assets/audio/forest_focus.mp3',
       description:
           'A gentle forest soundscape designed to help you focus and feel grounded.',
       sensoryRecipe: ['Breeze', 'Warm Light', 'Mist', 'Binaural', 'Soft Rain'],
@@ -16,8 +17,9 @@ class AmbienceRepository {
       id: '2',
       title: 'Ocean Calm',
       tag: 'Calm',
-      duration: Duration(minutes: 2),
+      duration: Duration(minutes: 3),
       imageUrl: 'assets/images/ocean.jpg',
+      audioAsset: 'assets/audio/ocean_calm.mp3',
       description:
           'Rolling ocean textures and distant shorelines for a calm, steady mind.',
       sensoryRecipe: ['Sea Air', 'Blue Light', 'Mist', 'Soft Tide', 'Binaural'],
@@ -26,8 +28,9 @@ class AmbienceRepository {
       id: '3',
       title: 'Night Rain',
       tag: 'Sleep',
-      duration: Duration(minutes: 4),
+      duration: Duration(minutes: 3),
       imageUrl: 'assets/images/rain.jpg',
+      audioAsset: 'assets/audio/night_rain.mp3',
       description:
           'Layered rain droplets and low evening ambience designed to ease sleep.',
       sensoryRecipe: [
@@ -44,6 +47,7 @@ class AmbienceRepository {
       tag: 'Reset',
       duration: Duration(minutes: 3),
       imageUrl: 'assets/images/mountain.jpg',
+      audioAsset: 'assets/audio/mountain_reset.mp3',
       description:
           'A refreshing alpine sound bath to reset your attention and energy.',
       sensoryRecipe: [

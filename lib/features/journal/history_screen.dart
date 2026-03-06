@@ -20,75 +20,41 @@ class HistoryScreen extends ConsumerWidget {
           SafeArea(
             child: entriesAsync.when(
               data: (entries) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(22, 28, 22, 28),
+                if (entries.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 28, 22, 28),
+                    child: Column(
+                      children: [
+                        _HistoryHeader(context),
+                        const SizedBox(height: 24),
+                        const Expanded(child: Center(child: _EmptyState(showTitle: false))),
+                      ],
+                    ),
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 28, 22, 0),
                   child: Column(
                     children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              if (Navigator.canPop(context)) {
-                                Navigator.pop(context);
-                              } else {
-                                Navigator.pushReplacementNamed(context, '/');
-                              }
-                            },
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black.withOpacity(0.22),
-                            ),
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () =>
-                                Navigator.pushReplacementNamed(context, '/'),
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black.withOpacity(0.18),
-                            ),
-                            icon: const Icon(
-                              Icons.home_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, '/reflection'),
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black.withOpacity(0.18),
-                            ),
-                            icon: const Icon(
-                              Icons.edit_note_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        'Reflection History',
-                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                              color: Colors.white.withOpacity(0.92),
-                            ),
-                      ),
+                      _HistoryHeader(context),
                       const SizedBox(height: 24),
-                      if (entries.isNotEmpty)
-                        ...entries.take(2).map(
-                              (e) => GestureDetector(
-                                onTap: () => Navigator.pushNamed(
-                                  context,
-                                  '/journalDetail',
-                                  arguments: e,
-                                ),
-                                child: JournalCard(entry: e),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: entries.length,
+                          itemBuilder: (_, i) {
+                            final e = entries[i];
+                            return GestureDetector(
+                              onTap: () => Navigator.pushNamed(
+                                context,
+                                '/journalDetail',
+                                arguments: e,
                               ),
-                            ),
-                      const SizedBox(height: 90),
-                      const _EmptyState(showTitle: false),
+                              child: JournalCard(entry: e),
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -102,6 +68,56 @@ class HistoryScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+Widget _HistoryHeader(BuildContext context) {
+  return Column(
+    children: [
+      Row(
+        children: [
+          IconButton(
+            onPressed: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                Navigator.pushReplacementNamed(context, '/');
+              }
+            },
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.black.withOpacity(0.22),
+            ),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: () => Navigator.pushReplacementNamed(context, '/'),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.black.withOpacity(0.18),
+            ),
+            icon: const Icon(Icons.home_rounded, color: Colors.white),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: () => Navigator.pushNamed(context, '/reflection'),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.black.withOpacity(0.18),
+            ),
+            icon: const Icon(Icons.edit_note_rounded, color: Colors.white),
+          ),
+        ],
+      ),
+      Text(
+        'Reflection History',
+        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+              color: Colors.white.withOpacity(0.92),
+            ),
+      ),
+    ],
+  );
 }
 
 class _HistoryBackground extends StatelessWidget {

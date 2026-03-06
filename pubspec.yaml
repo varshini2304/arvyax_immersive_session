@@ -67,6 +67,7 @@ flutter:
     - assets/images/ocean.jpg
     - assets/images/rain.jpg
     - assets/images/mountain.jpg
+    - assets/audio/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
